@@ -1,0 +1,658 @@
+<?php include("../incphp/hw.php") ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+<link rel="icon" href="/assets/images/logo.png" >
+    
+<title>explain like i'm five - Assignment Problems | EigenSpace</title>
+        
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>explain like i’m five - Assignment Problems | Eigenspace</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="explain like i’m five - Assignment Problems" />
+<meta name="author" content="anand" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="If client $j$ takes $m_i_j$ time to finish task $i$, Which task should be assigned to each client ? Assignment problems try to answet this. Let’s have a look through a simple example" />
+<meta property="og:description" content="If client $j$ takes $m_i_j$ time to finish task $i$, Which task should be assigned to each client ? Assignment problems try to answet this. Let’s have a look through a simple example" />
+<link rel="canonical" href="http://eigenspace.ml/gublu/2019-04-05-assignment-problem/" />
+<meta property="og:url" content="http://eigenspace.ml/gublu/2019-04-05-assignment-problem/" />
+<meta property="og:site_name" content="Eigenspace" />
+<meta property="og:image" content="http://localhost:4000/assets/images/1.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-04-05T00:00:00+00:00" />
+<script type="application/ld+json">
+{"description":"If client $j$ takes $m_i_j$ time to finish task $i$, Which task should be assigned to each client ? Assignment problems try to answet this. Let’s have a look through a simple example","author":{"@type":"Person","name":"anand"},"@type":"BlogPosting","url":"http://eigenspace.ml/gublu/2019-04-05-assignment-problem/","image":"http://localhost:4000/assets/images/1.jpg","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://eigenspace.ml/assets/images/logo.png"},"name":"anand"},"headline":"explain like i’m five - Assignment Problems","dateModified":"2019-04-05T00:00:00+00:00","datePublished":"2019-04-05T00:00:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://eigenspace.ml/gublu/2019-04-05-assignment-problem/"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+<link href="/assets/css/screen.css" rel="stylesheet">
+    
+<link href="/assets/css/main.css" rel="stylesheet">
+    
+<script src="/assets/js/jquery.min.js"></script>
+    
+</head>
+    
+
+    
+
+<body class="layout-post">
+	<!-- defer loading of font and font awesome -->
+	<noscript id="deferred-styles">
+		<link href="https://fonts.googleapis.com/css?family=Righteous%7CMerriweather:300,300i,400,400i,700,700i" rel="stylesheet">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+	</noscript>
+
+    
+<!-- Begin Menu Navigation
+================================================== -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top mediumnavigation nav-down">
+    
+    <div class="container pr-0">    
+    
+    <!-- Begin Logo -->
+    <a class="navbar-brand" href="/">
+    <img src="/assets/images/logo.png" alt="EigenSpace">
+        <span class="sitetitle">EigenSpace</span>
+    </a>
+    <!-- End Logo -->
+  
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMediumish" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    
+    <div class="collapse navbar-collapse" id="navbarMediumish">
+       
+        <!-- Begin Menu -->
+        
+            <ul class="navbar-nav ml-auto">
+                
+                
+                <li class="nav-item">
+                
+                <a class="nav-link" href="/index.html">Blog</a>
+                </li>
+              
+                <li class="nav-item">               
+                <a class="nav-link" href="/about">About</a>
+                </li>
+	              
+                <li class="nav-item">               
+                <a class="nav-link" href="/contacts">Contact</a>
+                </li>
+<!--
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://bootstrapstarter.com/bootstrap-templates/template-mediumish-bootstrap-jekyll/"> Docs</a>
+                </li>                
+                
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://www.wowthemes.net/themes/mediumish-wordpress/"><i class="fab fa-wordpress-simple"></i> WP Version</a>
+                </li>
+                
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://www.wowthemes.net/themes/mediumish-ghost/"><i class="fab fa-snapchat-ghost"></i> Ghost Version</a>
+                </li>
+
+                
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://github.com/wowthemesnet/mediumish-theme-jekyll"><i class="fab fa-github"></i> Fork on Github</a>
+                </li>
+	-->	
+                <script src="/assets/js/lunr.js"></script>
+
+
+<style>
+    .lunrsearchresult .title {color: #d9230f;}
+    .lunrsearchresult .url {color: silver;}
+    .lunrsearchresult a {display: block; color: #777;}
+    .lunrsearchresult a:hover, .lunrsearchresult a:focus {text-decoration: none;}
+    .lunrsearchresult a:hover .title {text-decoration: underline;}
+</style>
+
+
+<form class="bd-search" onSubmit="return lunr_search(document.getElementById('lunrsearch').value);">
+    <input type="text" class="form-control text-small launch-modal-search" id="lunrsearch" name="q" maxlength="255" value="" placeholder="Type and enter..."/>
+</form>
+
+<div id="lunrsearchresults">
+    <ul></ul>
+</div>
+
+<script src="/assets/js/lunrsearchengine.js"></script>
+                
+            </ul>		
+        
+        
+  
+        <!-- End Menu -->
+
+    </div>
+        
+    </div>
+</nav>
+<!-- End Navigation
+================================================== -->
+    
+<div class="site-content">   
+    
+<div class="container">
+    
+<!-- Site Title
+================================================== -->
+<!--
+<div class="mainheading">
+    <h1 class="sitetitle">EigenSpace</h1>
+    <p class="lead">
+         Home to random experiments and ideas from me. It's a personal blog
+    </p>
+</div>
+-->
+
+    
+    
+<!-- Content
+================================================== --> 
+<div class="main-content">
+    <!-- Begin Article
+================================================== -->
+<div class="container">
+	<div class="row">
+
+		<!-- Post Share -->
+		<div class="col-md-2 pl-0">            
+           <div class="share sticky-top sticky-top-offset">
+	<p>
+		Share
+	</p>
+	<ul>
+		<li class="ml-1 mr-1">
+			<a target="_blank" href="https://twitter.com/intent/tweet?text=explain like i'm five - Assignment Problems&url=http://eigenspace.ml/gublu/2019-04-05-assignment-problem/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+				<i class="fab fa-twitter"></i>
+			</a>
+		</li>
+
+		<li class="ml-1 mr-1">
+			<a target="_blank" href="https://facebook.com/sharer.php?u=http://eigenspace.ml/gublu/2019-04-05-assignment-problem/" onclick="window.open(this.href, 'facebook-share', 'width=550,height=435');return false;">
+				<i class="fab fa-facebook-f"></i>
+			</a>
+		</li>
+
+		<li class="ml-1 mr-1">
+			<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&url=http://eigenspace.ml/gublu/2019-04-05-assignment-problem/" onclick="window.open(this.href, 'width=550,height=435');return false;">
+				<i class="fab fa-linkedin-in"></i>
+			</a>
+		</li>
+
+	</ul>
+	
+    <div class="sep">
+    </div>				
+    <ul>
+        <li> 
+        <a  class="small smoothscroll" href="#disqus_thread"></a>
+        </li>
+    </ul>
+    
+</div>
+  
+		</div>
+		
+
+		<!-- Post -->        
+        
+        
+		<div class="col-md-9 flex-first flex-md-unordered">
+			<div class="mainheading">
+
+                <!-- Author Box -->
+                				
+				<div class="row post-top-meta">
+					<div class="col-xs-12 col-md-3 col-lg-2 text-center text-md-left mb-4 mb-md-0">
+						<img class="author-thumb" src="https://www.gravatar.com/avatar/?s=250&d=mm&r=x" alt="">
+					</div>
+					<div class="col-xs-12 col-md-9 col-lg-10 text-center text-md-left">
+						<a target="_blank" class="link-dark" href=""></a><a target="_blank" href="" class="btn follow"><i class="fab fa-twitter"></i> Follow</a><br>
+						<small class="author-description"></small>						
+					</div>
+				</div>				
+                
+                
+                <!-- Post Title -->
+				<h1 class="posttitle">explain like i'm five - Assignment Problems</h1> 
+				<small class="readtime">4 minutes read </small>
+			</div>
+
+            <!-- Adsense if enabled from _config.yml (change your pub id and slot) -->
+            
+            <!-- End Adsense -->
+
+			<!-- Post Featured Image -->
+            
+
+            
+            <img class="featured-image img-fluid lazyimg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAADklEQVR42mNkAANGCAUAACMAA2w/AMgAAAAASUVORK5CYII=" data-src="http://localhost:4000/assets/images/1.jpg" alt="explain like i'm five - Assignment Problems">
+            
+
+            
+            <!-- End Featured Image -->
+            
+            
+
+			<!-- Post Content -->
+			<div class="article-post">
+                <!-- Toc if any -->            
+                
+                <!-- End Toc -->
+				<p>As an HR manager, you’ve for vacant posts at your company - say (Post A, Post B, Post C, Post D). After long advertisement, only 4 peoples (Person 1, Person 2, Person 3, Person 4) turned up for interview. Each have them have their salary expectation for each posts as given below :</p>
+
+<p><span class="text-center">person 1 : 8L, 6L, 5L &amp; 7L for Post A, B, C, D respectively.</span>
+<span class="text-center">person 2 : 6L, 5L, 3L &amp; 4L for Post A, B, C, D respectively.</span>
+<span class="text-center">person 3 : 7L, 8L, 4L &amp; 6L for Post A, B, C, D respectively.</span>
+<span class="text-center">person 4 : 6L, 7L, 5L &amp; 6L for Post A, B, C, D respectively.</span></p>
+
+<p>Your task as HR Recruitment Specialist is to find right candadates for each post such that total cost to company is minimized.
+(let’s assume all are well qualified for their jobs and focus on math here)</p>
+
+<p>Above problem can be represented in simple matrix format -</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Post A</th>
+      <th>Post B</th>
+      <th>Post C</th>
+      <th>Post D</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8</td>
+      <td>6</td>
+      <td>5</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>6</td>
+      <td>5</td>
+      <td>3</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>7</td>
+      <td>8</td>
+      <td>4</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>6</td>
+      <td>7</td>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This is a typical assignment problem. <strong>One</strong> person gets assigned to <strong>one</strong> job. Note that -</p>
+<ol>
+  <li>Once a person, A has been assigned a job 1, he (A) can’t be assigned to another job. And job (1) can’t be assigned to another person.</li>
+  <li>if a person reduces / increases their salary expectation by a contant for each job, it’d not affect the what job he’d get. i.e. you can subtract a constant value from each row and answer will not change.</li>
+  <li>similarly, if all person has low salary expectation for a job, it’d not affect what they will get (job assignment will remain unchanged) i.e. you can subtract a constant from each column and answer will not change.</li>
+  <li>from (2) and (3) you can observe,  subtracting  a constant value from entire table will also not affect the solution.</li>
+</ol>
+
+<p>Based on above mentioned facts, we’ll try to solve the problem - 
+We want atleast one zero in each column and one zero in each row. We use (2), (3) and (4) to achive that.
+step 1: we subtract the row-minimum from each row. (You can start with subtracting a constant from entire table as well)</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Post A</th>
+      <th>Post B</th>
+      <th>Post C</th>
+      <th>Post D</th>
+      <th>subtract from row</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>8</td>
+      <td>6</td>
+      <td>5</td>
+      <td>7</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>6</td>
+      <td>5</td>
+      <td>3</td>
+      <td>4</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>7</td>
+      <td>8</td>
+      <td>4</td>
+      <td>6</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>6</td>
+      <td>7</td>
+      <td>5</td>
+      <td>6</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>step 2: All rows have one zero. But column A, B, D doesn’t have zeros. Let’s subtract column minimum from each column -</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Post A</th>
+      <th>Post B</th>
+      <th>Post C</th>
+      <th>Post D</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>2</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>3</td>
+      <td>4</td>
+      <td>0</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>subtract from column</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>step 3:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Post A</th>
+      <th>Post B</th>
+      <th>Post C</th>
+      <th>Post D</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Now we have one zero in each column and row. Remember that our solution (which person gets which job) is same as we’d have got from first matrix. Clealy, in step 3 matrix, we can find a assignment such that there’s zero <strong>apparent</strong> cost to company. Actual cost to company has to be calculated from initial matrix.</p>
+
+<p>Number of zeros in row denotes possible jobs that person can get - 1 can get B, C. 2 can get C, D. 3 can get only C. 4 can get A ,C, D. We allocate job first to that person who has least number of options. in this case 3.</p>
+
+<p>One solution can be -</p>
+
+<ul>
+  <li>person 3: Job C. Now Person 3 can’t be assigned any more jobs ( we strike off row 3 ) and Post C can’t be assigned to any other person ( we strike off column for Post C )</li>
+  <li>Looking at remaining matrix, person 1 has only one option left, we can assign Person 1: Post B. Strike off row 1 and Column B as Post B is filled and person 1 is occupied.</li>
+  <li>Now Person 2 get Post D. strike off row 2 and column D.</li>
+  <li>Person 4 gets Post A.</li>
+</ul>
+
+<p>Assignment is : 1 gets B, 2 gets D, 3 gets C, 4 get A.
+total cost is  : 6+ 4+ 4 + 6 = 20 (look at 1B, 2D, 2C &amp; 4A in table in question)
+—-
+In case such assignments are not possible (suppose, in case of person 4, there are no remaining zeros in row), we say no solution exits to the assignment problem.</p>
+
+<p>If number of Jobs is more than people  OR number of peoples are more than job, It is called an <strong>Unbalanced Problem</strong>. In such cases we fake jobs (columns) or peoples (row) with zero entries. And then solve the problem as before.</p>
+
+			</div>
+            
+            <!-- Rating -->
+            
+            
+            <!-- Post Date -->
+            <p>
+            <small>
+                <span class="post-date"><time class="post-date" datetime="2019-04-05">05 Apr 2019</time></span>           
+                
+                </small>
+            </p>
+            
+			<!-- Post Categories -->
+			<div class="after-post-cats">
+				<ul class="tags mb-4">
+                    
+                    
+                    <li>                        
+                     <a class="smoothscroll" href="/categories#OR,">OR,</a>
+                    </li>
+                    
+                    <li>                        
+                     <a class="smoothscroll" href="/categories#tutorial">tutorial</a>
+                    </li>
+                    
+				</ul>
+			</div>
+            <!-- End Categories -->
+            
+            <!-- Post Tags -->
+			<div class="after-post-tags">
+				<ul class="tags">
+                    
+                    
+				</ul>
+			</div>
+			<!-- End Tags -->
+            
+            <!-- Prev/Next -->
+            <div class="row PageNavigation d-flex justify-content-between font-weight-bold">
+            
+            
+            <div class="clearfix"></div>
+            </div>
+            <!-- End Categories -->
+
+		</div>
+		<!-- End Post -->
+
+	</div>
+</div>
+<!-- End Article
+================================================== -->
+
+  
+
+<!-- Begin Comments
+================================================== -->
+
+    <div class="container">
+        <div id="comments" class="row justify-content-center mb-5">
+            <div class="col-md-8">              
+                <section class="disqus">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'eigenspace-ml'; 
+        var disqus_developer = 0;
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = window.location.protocol + '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+                
+            </div>
+        </div>
+    </div>
+
+<!--End Comments
+================================================== -->
+
+
+<!-- Review with LD-JSON, adapt it for your needs if you like, but make sure you test the generated HTML source code first: 
+https://search.google.com/structured-data/testing-tool/u/0/
+================================================== -->
+
+
+</div>
+
+
+<!-- Bottom Alert Bar
+================================================== -->
+<div class="alertbar">
+	<div class="container text-center">
+		<span><img src="/assets/images/logo.png" alt="Eigenspace"> &nbsp; Never miss a <b>story</b> from us, subscribe to our newsletter</span>
+        <form action="" method="post" name="mc-embedded-subscribe-form" class="wj-contact-form validate" target="_blank" novalidate>
+            <div class="mc-field-group">
+            <input type="email" placeholder="Email" name="EMAIL" class="required email" id="mce-EMAIL" autocomplete="on" required>
+            <input type="submit" value="Subscribe" name="subscribe" class="heart">
+            </div>
+        </form>
+	</div>
+</div>    
+
+    
+</div>
+
+<!-- Categories Jumbotron
+================================================== -->
+<div class="jumbotron fortags">
+	<div class="d-md-flex h-100">
+		<div class="col-md-4 transpdark align-self-center text-center h-100">
+            <div class="d-md-flex align-items-center justify-content-center h-100">
+                <h2 class="d-md-block align-self-center py-1 font-weight-light">Explore <span class="d-none d-md-inline">→</span></h2>
+            </div>
+		</div>
+		<div class="col-md-8 p-5 align-self-center text-center">      
+            
+            
+                                        
+                    <a class="mt-1 mb-1" href="/categories#reflections">reflections (1)</a>
+                                        
+                    <a class="mt-1 mb-1" href="/categories#experiments">experiments (1)</a>
+                
+            
+            
+		</div>
+        
+	</div>
+</div>
+
+ 
+
+
+<!-- Begin Footer
+================================================== -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-sm-6 text-center text-lg-left">
+                 Copyright © 2020 EigenSpace 
+            </div>
+            <div class="col-md-6 col-sm-6 text-center text-lg-right">    
+                <a target="_blank" href="https://www.wowthemes.net/mediumish-free-jekyll-template/">Made with &#x2665; in Jekyll  </a>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- End Footer
+================================================== -->
+
+   
+</div> <!-- /.site-content -->
+
+<!-- Scripts
+================================================== -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    
+<script src="/assets/js/mediumish.js"></script>
+
+
+<script src="/assets/js/lazyload.js"></script>
+
+
+<script src="/assets/js/ie10-viewport-bug-workaround.js"></script> 
+    
+
+<script id="dsq-count-scr" src="//eigenspace-ml.disqus.com/count.js"></script>
+
+    
+</body>
+</html>

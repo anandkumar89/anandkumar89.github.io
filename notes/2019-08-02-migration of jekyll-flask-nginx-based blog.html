@@ -1,0 +1,501 @@
+<?php include("../incphp/hw.php") ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+<link rel="icon" href="/assets/images/logo.png" >
+    
+<title>Setting up a blog with Jekyll-Flask-Nginx | EigenSpace</title>
+        
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Setting up a blog with Jekyll-Flask-Nginx | Eigenspace</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Setting up a blog with Jekyll-Flask-Nginx" />
+<meta name="author" content="sal" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="setup I’ve two different server roots served using nginx. For this I’ve two site configuration in /etx/nginx/site-available/ with it’s symbolic links in site-enabled folder. Each site is configured to respond to two different subdomains - www.example.com and subdomain.example.com. hosts file is also updated accordingly. while first server root is populated with static files created by Jekyll. Second server root is folder containing flask app. Requests to flask are made via nginx using reverse proxy. How this works From client to server Once user has made on request for a specific url, based on entries on DNS it determines where to send request to. DNS entries will have all subdomain listed under different CNAME pointing to same server. Once request reaches to server, It checks host file is particular subdomain is hosted. If yes, At server nginx identifies whether request is for subdomain-1 or subdomain-2. If request is for subdomain-1, then based on server configuration it serves the static file. If request is for site-2, it uses server-configuration and makes appropriate requests to flask and serves flask response thereupon. Particulars I am using GCP instance to host my blog. Google cloud DNS is used to maintain name servers. following are critical steps Install nginx create virtual hosts - reverse proxy one of hosts to flask Add sudomains to /etc/hosts file Update CNAME in google-cloud-dns Setting up jekyll Install ruby, ruby-dev, build-essentials use gem install to install jekyll, bundler Copy GemFile.lock, Gemfile and current blog backup - run bundle install I’ve had issues in compiling eventmachine - almost spent entire day trobleshooting only to find out build-essentials was not installed. Setup Flask Install Flask create an app in root directory run flask on reverse proxy address provided on nginx. following are key steps - Install nginx run sudo apt-get install nginx. To start/stop/restart use systemctl start/stop/restart nginx Creating virtual hosts Usually, nginx is installed in /etc/nginx. Default configuration for any site is availble in /etc/nginx/site-available/default or (/any-other-conf). If sites available is enabled, some of files in site-available will have it’s symbolic-links in sites-enabled folder. I’ve removed default site-configuration and have created two different sites instead - each has it’s own server root - serving separate subdomains. Please ensure to copy these configuration before while migration. Adding subdomains to hosts file Additionally, different subdomains have to be put under /etc/hosts file. 1 2 127.0.0.1 www.example.com example.com 127.0.0.1 www.sub.example.com sub.example.com Update cloud DNS (once in life-time) To create subdomain add CNAME entry pointing to domain. Update host file on server accordingly. Setup Jekyll Troubleshooting eventmachine issue - ensure ruby, ruby-dev and build-essential are installed. I am using ruby2.3. For ruby 2.5 and beyond there are few my be few different issues. Setting up flask Do usuals. Nothing specific. Issues with CORS added header in particular location directive allowing request from specific domain - I read that I could allow either all domain / no domain or list of domain in server configuration. However, I found that putting multiple domains was not working and I have allowed only one domain. 1 add_header &quot;Access-Control-Allow-Origin&quot; &quot;http://eigenspace.ml&quot;" />
+<meta property="og:description" content="setup I’ve two different server roots served using nginx. For this I’ve two site configuration in /etx/nginx/site-available/ with it’s symbolic links in site-enabled folder. Each site is configured to respond to two different subdomains - www.example.com and subdomain.example.com. hosts file is also updated accordingly. while first server root is populated with static files created by Jekyll. Second server root is folder containing flask app. Requests to flask are made via nginx using reverse proxy. How this works From client to server Once user has made on request for a specific url, based on entries on DNS it determines where to send request to. DNS entries will have all subdomain listed under different CNAME pointing to same server. Once request reaches to server, It checks host file is particular subdomain is hosted. If yes, At server nginx identifies whether request is for subdomain-1 or subdomain-2. If request is for subdomain-1, then based on server configuration it serves the static file. If request is for site-2, it uses server-configuration and makes appropriate requests to flask and serves flask response thereupon. Particulars I am using GCP instance to host my blog. Google cloud DNS is used to maintain name servers. following are critical steps Install nginx create virtual hosts - reverse proxy one of hosts to flask Add sudomains to /etc/hosts file Update CNAME in google-cloud-dns Setting up jekyll Install ruby, ruby-dev, build-essentials use gem install to install jekyll, bundler Copy GemFile.lock, Gemfile and current blog backup - run bundle install I’ve had issues in compiling eventmachine - almost spent entire day trobleshooting only to find out build-essentials was not installed. Setup Flask Install Flask create an app in root directory run flask on reverse proxy address provided on nginx. following are key steps - Install nginx run sudo apt-get install nginx. To start/stop/restart use systemctl start/stop/restart nginx Creating virtual hosts Usually, nginx is installed in /etc/nginx. Default configuration for any site is availble in /etc/nginx/site-available/default or (/any-other-conf). If sites available is enabled, some of files in site-available will have it’s symbolic-links in sites-enabled folder. I’ve removed default site-configuration and have created two different sites instead - each has it’s own server root - serving separate subdomains. Please ensure to copy these configuration before while migration. Adding subdomains to hosts file Additionally, different subdomains have to be put under /etc/hosts file. 1 2 127.0.0.1 www.example.com example.com 127.0.0.1 www.sub.example.com sub.example.com Update cloud DNS (once in life-time) To create subdomain add CNAME entry pointing to domain. Update host file on server accordingly. Setup Jekyll Troubleshooting eventmachine issue - ensure ruby, ruby-dev and build-essential are installed. I am using ruby2.3. For ruby 2.5 and beyond there are few my be few different issues. Setting up flask Do usuals. Nothing specific. Issues with CORS added header in particular location directive allowing request from specific domain - I read that I could allow either all domain / no domain or list of domain in server configuration. However, I found that putting multiple domains was not working and I have allowed only one domain. 1 add_header &quot;Access-Control-Allow-Origin&quot; &quot;http://eigenspace.ml&quot;" />
+<link rel="canonical" href="http://eigenspace.ml/notes/2019-08-02-migration%20of%20jekyll-flask-nginx-based%20blog" />
+<meta property="og:url" content="http://eigenspace.ml/notes/2019-08-02-migration%20of%20jekyll-flask-nginx-based%20blog" />
+<meta property="og:site_name" content="Eigenspace" />
+<meta property="og:image" content="http://eigenspace.ml/assets/images/16.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-08-02T00:00:00+00:00" />
+<script type="application/ld+json">
+{"description":"setup I’ve two different server roots served using nginx. For this I’ve two site configuration in /etx/nginx/site-available/ with it’s symbolic links in site-enabled folder. Each site is configured to respond to two different subdomains - www.example.com and subdomain.example.com. hosts file is also updated accordingly. while first server root is populated with static files created by Jekyll. Second server root is folder containing flask app. Requests to flask are made via nginx using reverse proxy. How this works From client to server Once user has made on request for a specific url, based on entries on DNS it determines where to send request to. DNS entries will have all subdomain listed under different CNAME pointing to same server. Once request reaches to server, It checks host file is particular subdomain is hosted. If yes, At server nginx identifies whether request is for subdomain-1 or subdomain-2. If request is for subdomain-1, then based on server configuration it serves the static file. If request is for site-2, it uses server-configuration and makes appropriate requests to flask and serves flask response thereupon. Particulars I am using GCP instance to host my blog. Google cloud DNS is used to maintain name servers. following are critical steps Install nginx create virtual hosts - reverse proxy one of hosts to flask Add sudomains to /etc/hosts file Update CNAME in google-cloud-dns Setting up jekyll Install ruby, ruby-dev, build-essentials use gem install to install jekyll, bundler Copy GemFile.lock, Gemfile and current blog backup - run bundle install I’ve had issues in compiling eventmachine - almost spent entire day trobleshooting only to find out build-essentials was not installed. Setup Flask Install Flask create an app in root directory run flask on reverse proxy address provided on nginx. following are key steps - Install nginx run sudo apt-get install nginx. To start/stop/restart use systemctl start/stop/restart nginx Creating virtual hosts Usually, nginx is installed in /etc/nginx. Default configuration for any site is availble in /etc/nginx/site-available/default or (/any-other-conf). If sites available is enabled, some of files in site-available will have it’s symbolic-links in sites-enabled folder. I’ve removed default site-configuration and have created two different sites instead - each has it’s own server root - serving separate subdomains. Please ensure to copy these configuration before while migration. Adding subdomains to hosts file Additionally, different subdomains have to be put under /etc/hosts file. 1 2 127.0.0.1 www.example.com example.com 127.0.0.1 www.sub.example.com sub.example.com Update cloud DNS (once in life-time) To create subdomain add CNAME entry pointing to domain. Update host file on server accordingly. Setup Jekyll Troubleshooting eventmachine issue - ensure ruby, ruby-dev and build-essential are installed. I am using ruby2.3. For ruby 2.5 and beyond there are few my be few different issues. Setting up flask Do usuals. Nothing specific. Issues with CORS added header in particular location directive allowing request from specific domain - I read that I could allow either all domain / no domain or list of domain in server configuration. However, I found that putting multiple domains was not working and I have allowed only one domain. 1 add_header &quot;Access-Control-Allow-Origin&quot; &quot;http://eigenspace.ml&quot;","author":{"@type":"Person","name":"sal"},"@type":"BlogPosting","url":"http://eigenspace.ml/notes/2019-08-02-migration%20of%20jekyll-flask-nginx-based%20blog","image":"http://eigenspace.ml/assets/images/16.jpg","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://eigenspace.ml/assets/images/logo.png"},"name":"sal"},"headline":"Setting up a blog with Jekyll-Flask-Nginx","dateModified":"2019-08-02T00:00:00+00:00","datePublished":"2019-08-02T00:00:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://eigenspace.ml/notes/2019-08-02-migration%20of%20jekyll-flask-nginx-based%20blog"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+<link href="/assets/css/screen.css" rel="stylesheet">
+    
+<link href="/assets/css/main.css" rel="stylesheet">
+    
+<script src="/assets/js/jquery.min.js"></script>
+    
+</head>
+    
+
+    
+
+<body class="layout-post">
+	<!-- defer loading of font and font awesome -->
+	<noscript id="deferred-styles">
+		<link href="https://fonts.googleapis.com/css?family=Righteous%7CMerriweather:300,300i,400,400i,700,700i" rel="stylesheet">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+	</noscript>
+
+    
+<!-- Begin Menu Navigation
+================================================== -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top mediumnavigation nav-down">
+    
+    <div class="container pr-0">    
+    
+    <!-- Begin Logo -->
+    <a class="navbar-brand" href="/">
+    <img src="/assets/images/logo.png" alt="EigenSpace">
+        <span class="sitetitle">EigenSpace</span>
+    </a>
+    <!-- End Logo -->
+  
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMediumish" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    
+    <div class="collapse navbar-collapse" id="navbarMediumish">
+       
+        <!-- Begin Menu -->
+        
+            <ul class="navbar-nav ml-auto">
+                
+                
+                <li class="nav-item">
+                
+                <a class="nav-link" href="/index.html">Blog</a>
+                </li>
+              
+                <li class="nav-item">               
+                <a class="nav-link" href="/about">About</a>
+                </li>
+	              
+                <li class="nav-item">               
+                <a class="nav-link" href="/contacts">Contact</a>
+                </li>
+<!--
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://bootstrapstarter.com/bootstrap-templates/template-mediumish-bootstrap-jekyll/"> Docs</a>
+                </li>                
+                
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://www.wowthemes.net/themes/mediumish-wordpress/"><i class="fab fa-wordpress-simple"></i> WP Version</a>
+                </li>
+                
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://www.wowthemes.net/themes/mediumish-ghost/"><i class="fab fa-snapchat-ghost"></i> Ghost Version</a>
+                </li>
+
+                
+                <li class="nav-item">
+                <a target="_blank" class="nav-link" href="https://github.com/wowthemesnet/mediumish-theme-jekyll"><i class="fab fa-github"></i> Fork on Github</a>
+                </li>
+	-->	
+                <script src="/assets/js/lunr.js"></script>
+
+
+<style>
+    .lunrsearchresult .title {color: #d9230f;}
+    .lunrsearchresult .url {color: silver;}
+    .lunrsearchresult a {display: block; color: #777;}
+    .lunrsearchresult a:hover, .lunrsearchresult a:focus {text-decoration: none;}
+    .lunrsearchresult a:hover .title {text-decoration: underline;}
+</style>
+
+
+<form class="bd-search" onSubmit="return lunr_search(document.getElementById('lunrsearch').value);">
+    <input type="text" class="form-control text-small launch-modal-search" id="lunrsearch" name="q" maxlength="255" value="" placeholder="Type and enter..."/>
+</form>
+
+<div id="lunrsearchresults">
+    <ul></ul>
+</div>
+
+<script src="/assets/js/lunrsearchengine.js"></script>
+                
+            </ul>		
+        
+        
+  
+        <!-- End Menu -->
+
+    </div>
+        
+    </div>
+</nav>
+<!-- End Navigation
+================================================== -->
+    
+<div class="site-content">   
+    
+<div class="container">
+    
+<!-- Site Title
+================================================== -->
+<!--
+<div class="mainheading">
+    <h1 class="sitetitle">EigenSpace</h1>
+    <p class="lead">
+         Home to random experiments and ideas from me. It's a personal blog
+    </p>
+</div>
+-->
+
+    
+    
+<!-- Content
+================================================== --> 
+<div class="main-content">
+    <!-- Begin Article
+================================================== -->
+<div class="container">
+	<div class="row">
+
+		<!-- Post Share -->
+		<div class="col-md-2 pl-0">            
+           <div class="share sticky-top sticky-top-offset">
+	<p>
+		Share
+	</p>
+	<ul>
+		<li class="ml-1 mr-1">
+			<a target="_blank" href="https://twitter.com/intent/tweet?text=Setting up a blog with Jekyll-Flask-Nginx&url=http://eigenspace.ml/notes/2019-08-02-migration%20of%20jekyll-flask-nginx-based%20blog" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+				<i class="fab fa-twitter"></i>
+			</a>
+		</li>
+
+		<li class="ml-1 mr-1">
+			<a target="_blank" href="https://facebook.com/sharer.php?u=http://eigenspace.ml/notes/2019-08-02-migration%20of%20jekyll-flask-nginx-based%20blog" onclick="window.open(this.href, 'facebook-share', 'width=550,height=435');return false;">
+				<i class="fab fa-facebook-f"></i>
+			</a>
+		</li>
+
+		<li class="ml-1 mr-1">
+			<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&url=http://eigenspace.ml/notes/2019-08-02-migration%20of%20jekyll-flask-nginx-based%20blog" onclick="window.open(this.href, 'width=550,height=435');return false;">
+				<i class="fab fa-linkedin-in"></i>
+			</a>
+		</li>
+
+	</ul>
+	
+    <div class="sep">
+    </div>				
+    <ul>
+        <li> 
+        <a  class="small smoothscroll" href="#disqus_thread"></a>
+        </li>
+    </ul>
+    
+</div>
+  
+		</div>
+		
+
+		<!-- Post -->        
+        
+        
+		<div class="col-md-9 flex-first flex-md-unordered">
+			<div class="mainheading">
+
+                <!-- Author Box -->
+                				
+				<div class="row post-top-meta">
+					<div class="col-xs-12 col-md-3 col-lg-2 text-center text-md-left mb-4 mb-md-0">
+						<img class="author-thumb" src="https://www.gravatar.com/avatar/0a71099cb926d5cb0caced97110704b1?s=250&d=mm&r=x" alt="Anand">
+					</div>
+					<div class="col-xs-12 col-md-9 col-lg-10 text-center text-md-left">
+						<a target="_blank" class="link-dark" href="http://eigenspace.ml/authors/anand">Anand</a><a target="_blank" href="https://twitter.com/anand4k" class="btn follow"><i class="fab fa-twitter"></i> Follow</a><br>
+						<small class="author-description">Author is an structural engineer, programming enthusiast and avid researcher in science.</small>						
+					</div>
+				</div>				
+                
+                
+                <!-- Post Title -->
+				<h1 class="posttitle">Setting up a blog with Jekyll-Flask-Nginx</h1> 
+				<small class="readtime">3 minutes read </small>
+			</div>
+
+            <!-- Adsense if enabled from _config.yml (change your pub id and slot) -->
+            
+            <!-- End Adsense -->
+
+			<!-- Post Featured Image -->
+            
+
+            
+            <img class="featured-image img-fluid lazyimg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAADklEQVR42mNkAANGCAUAACMAA2w/AMgAAAAASUVORK5CYII=" data-src="http://eigenspace.ml/assets/images/16.jpg" alt="Setting up a blog with Jekyll-Flask-Nginx">
+            
+
+            
+            <!-- End Featured Image -->
+            
+            
+
+			<!-- Post Content -->
+			<div class="article-post">
+                <!-- Toc if any -->            
+                
+                <!-- End Toc -->
+				<h2 id="setup">setup</h2>
+
+<p>I’ve two different server roots served using nginx. For this I’ve two site configuration in <code class="highlighter-rouge">/etx/nginx/site-available/</code> with it’s symbolic links in <code class="highlighter-rouge">site-enabled</code> folder. Each site is configured to respond to two different subdomains - <code class="highlighter-rouge">www.example.com</code> and <code class="highlighter-rouge">subdomain.example.com</code>. <code class="highlighter-rouge">hosts</code> file is also updated accordingly.</p>
+
+<p>while first server root is populated with static files created by Jekyll. Second server root is folder containing flask app. Requests to flask are made via nginx using reverse proxy.</p>
+
+<h2 id="how-this-works">How this works</h2>
+
+<h3 id="from-client-to-server">From client to server</h3>
+<p>Once user has made on request for a specific url, based on entries on DNS it determines where to send request to. DNS entries will have all subdomain listed under different <code class="highlighter-rouge">CNAME</code> pointing to same server. Once request reaches to server, It checks host file is particular subdomain is hosted. If yes,</p>
+
+<h3 id="at-server">At server</h3>
+<p>nginx identifies whether request is for subdomain-1 or subdomain-2. If request is for subdomain-1, then based on server configuration it serves the static file. If request is for site-2, it uses server-configuration and makes appropriate requests to flask and serves flask response thereupon.</p>
+
+<h2 id="particulars">Particulars</h2>
+<p>I am using GCP instance to host my blog. Google cloud DNS is used to maintain name servers.</p>
+
+<h3 id="following-are-critical-steps">following are critical steps</h3>
+<ol>
+  <li>Install nginx</li>
+  <li>create virtual hosts - reverse proxy one of hosts to flask</li>
+  <li>Add sudomains to /etc/hosts file</li>
+  <li>Update <code class="highlighter-rouge">CNAME</code> in google-cloud-dns</li>
+  <li>Setting up jekyll
+    <ul>
+      <li>Install ruby, ruby-dev, build-essentials</li>
+      <li>use <code class="highlighter-rouge">gem install</code> to install jekyll, bundler</li>
+      <li>Copy GemFile.lock, Gemfile and current blog backup - run <code class="highlighter-rouge">bundle install</code></li>
+      <li>I’ve had issues in compiling eventmachine - almost spent entire day trobleshooting only to find out build-essentials was not installed.</li>
+    </ul>
+  </li>
+  <li>Setup Flask
+    <ul>
+      <li>Install Flask</li>
+      <li>create an app in root directory</li>
+      <li>run flask on reverse proxy address provided on nginx.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>following are key steps -</p>
+<h2 id="install-nginx">Install nginx</h2>
+<p>run <code class="highlighter-rouge">sudo apt-get install nginx</code>. To start/stop/restart use <code class="highlighter-rouge">systemctl start/stop/restart nginx</code></p>
+
+<h2 id="creating-virtual-hosts">Creating virtual hosts</h2>
+<p>Usually, nginx is installed in /etc/nginx. Default configuration for any site is availble in /etc/nginx/site-available/default or (/any-other-conf). If sites available is enabled, some of files in <code class="highlighter-rouge">site-available</code> will have it’s symbolic-links in <code class="highlighter-rouge">sites-enabled</code> folder.</p>
+
+<p>I’ve removed default site-configuration and have created two different sites instead - each has it’s own server root - serving separate subdomains. Please ensure to copy these configuration before while migration.</p>
+
+<h2 id="adding-subdomains-to-hosts-file">Adding subdomains to hosts file</h2>
+<p>Additionally, different subdomains have to be put under <strong>/etc/hosts</strong> file.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>127.0.0.1		www.example.com 		example.com
+127.0.0.1		www.sub.example.com 	sub.example.com
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h2 id="update-cloud-dns-once-in-life-time">Update cloud DNS (once in life-time)</h2>
+<p>To create subdomain add <code class="highlighter-rouge">CNAME</code> entry pointing to domain. Update host file on server accordingly.</p>
+
+<h2 id="setup-jekyll">Setup Jekyll</h2>
+<p>Troubleshooting <code class="highlighter-rouge">eventmachine</code> issue - ensure ruby, ruby-dev and build-essential are installed. I am using ruby2.3. For ruby 2.5 and beyond there are few my be few different issues.</p>
+
+<h2 id="setting-up-flask">Setting up flask</h2>
+<p>Do usuals. Nothing specific.</p>
+
+<h2 id="issues-with-cors">Issues with CORS</h2>
+<p>added header in particular location directive allowing request from specific domain - I read that I could allow either all domain / no domain or list of domain in server configuration. However, I found that putting multiple domains was not working and I have allowed only one domain.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>add_header "Access-Control-Allow-Origin" "http://eigenspace.ml"
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+			</div>
+            
+            <!-- Rating -->
+            
+            
+            <!-- Post Date -->
+            <p>
+            <small>
+                <span class="post-date"><time class="post-date" datetime="2019-08-02">02 Aug 2019</time></span>           
+                
+                </small>
+            </p>
+            
+			<!-- Post Categories -->
+			<div class="after-post-cats">
+				<ul class="tags mb-4">
+                    
+                    
+                    <li>                        
+                     <a class="smoothscroll" href="/categories#Jekyll">Jekyll</a>
+                    </li>
+                    
+                    <li>                        
+                     <a class="smoothscroll" href="/categories#tutorial">tutorial</a>
+                    </li>
+                    
+				</ul>
+			</div>
+            <!-- End Categories -->
+            
+            <!-- Post Tags -->
+			<div class="after-post-tags">
+				<ul class="tags">
+                    
+                    
+				</ul>
+			</div>
+			<!-- End Tags -->
+            
+            <!-- Prev/Next -->
+            <div class="row PageNavigation d-flex justify-content-between font-weight-bold">
+            
+            
+            <div class="clearfix"></div>
+            </div>
+            <!-- End Categories -->
+
+		</div>
+		<!-- End Post -->
+
+	</div>
+</div>
+<!-- End Article
+================================================== -->
+
+  
+
+<!-- Begin Comments
+================================================== -->
+
+    <div class="container">
+        <div id="comments" class="row justify-content-center mb-5">
+            <div class="col-md-8">              
+                <section class="disqus">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'eigenspace-ml'; 
+        var disqus_developer = 0;
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = window.location.protocol + '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+                
+            </div>
+        </div>
+    </div>
+
+<!--End Comments
+================================================== -->
+
+
+<!-- Review with LD-JSON, adapt it for your needs if you like, but make sure you test the generated HTML source code first: 
+https://search.google.com/structured-data/testing-tool/u/0/
+================================================== -->
+
+
+</div>
+
+
+<!-- Bottom Alert Bar
+================================================== -->
+<div class="alertbar">
+	<div class="container text-center">
+		<span><img src="/assets/images/logo.png" alt="Eigenspace"> &nbsp; Never miss a <b>story</b> from us, subscribe to our newsletter</span>
+        <form action="" method="post" name="mc-embedded-subscribe-form" class="wj-contact-form validate" target="_blank" novalidate>
+            <div class="mc-field-group">
+            <input type="email" placeholder="Email" name="EMAIL" class="required email" id="mce-EMAIL" autocomplete="on" required>
+            <input type="submit" value="Subscribe" name="subscribe" class="heart">
+            </div>
+        </form>
+	</div>
+</div>    
+
+    
+</div>
+
+<!-- Categories Jumbotron
+================================================== -->
+<div class="jumbotron fortags">
+	<div class="d-md-flex h-100">
+		<div class="col-md-4 transpdark align-self-center text-center h-100">
+            <div class="d-md-flex align-items-center justify-content-center h-100">
+                <h2 class="d-md-block align-self-center py-1 font-weight-light">Explore <span class="d-none d-md-inline">→</span></h2>
+            </div>
+		</div>
+		<div class="col-md-8 p-5 align-self-center text-center">      
+            
+            
+                                        
+                    <a class="mt-1 mb-1" href="/categories#reflections">reflections (1)</a>
+                                        
+                    <a class="mt-1 mb-1" href="/categories#experiments">experiments (1)</a>
+                
+            
+            
+		</div>
+        
+	</div>
+</div>
+
+ 
+
+
+<!-- Begin Footer
+================================================== -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-sm-6 text-center text-lg-left">
+                 Copyright © 2020 EigenSpace 
+            </div>
+            <div class="col-md-6 col-sm-6 text-center text-lg-right">    
+                <a target="_blank" href="https://www.wowthemes.net/mediumish-free-jekyll-template/">Made with &#x2665; in Jekyll  </a>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- End Footer
+================================================== -->
+
+   
+</div> <!-- /.site-content -->
+
+<!-- Scripts
+================================================== -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    
+<script src="/assets/js/mediumish.js"></script>
+
+
+<script src="/assets/js/lazyload.js"></script>
+
+
+<script src="/assets/js/ie10-viewport-bug-workaround.js"></script> 
+    
+
+<script id="dsq-count-scr" src="//eigenspace-ml.disqus.com/count.js"></script>
+
+    
+</body>
+</html>

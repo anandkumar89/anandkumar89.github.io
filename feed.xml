@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Eigenspace</title>
+    <description>Home to random experiments and ideas from me. It's a personal blog</description>
+    <link>http://eigenspace.ml/</link>
+    <atom:link href="http://eigenspace.ml/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 17 Feb 2020 07:04:52 +0000</pubDate>
+    <lastBuildDate>Mon, 17 Feb 2020 07:04:52 +0000</lastBuildDate>
+    <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>Printing a booklet - the python way</title>
+        <description>&lt;p&gt;I prefer hard copies over soft copy of a book any day. Thus I’ve been printing booklets whose hard copies are hard to get or when I need a section or chapter of book. Priting a booklet is different than normal paper printing in following sense - left and right margin are not same for booklet. However, most of publicly available pdf have symmetric margin for better readability.Merely adding left margin to each page is not going to solve the problem as margins have to be mirrored on opposite pages for booklet printing.&lt;/p&gt;
+
+&lt;p&gt;I haven’t been able to find any free to use software where I could easily manipulate margins of odd/even numbered pages  or trim extra margin of pages. Which led me to create python based solution.&lt;/p&gt;
+
+&lt;p&gt;I’ve used &lt;code class=&quot;highlighter-rouge&quot;&gt;pyPDF2&lt;/code&gt; package of python. Please note to install &lt;code class=&quot;highlighter-rouge&quot;&gt;PyPDF2&lt;/code&gt; and not &lt;code class=&quot;highlighter-rouge&quot;&gt;PyPDF&lt;/code&gt; as till today (28th Aug 2019) &lt;code class=&quot;highlighter-rouge&quot;&gt;PyPDF&lt;/code&gt; has some bugs in python3.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;rouge-code&quot;&gt;&lt;pre&gt;pip intall PyPDF2
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I am aditionally using &lt;code class=&quot;highlighter-rouge&quot;&gt;tqdm&lt;/code&gt; to track progress of loop.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;rouge-code&quot;&gt;&lt;pre&gt;inpdf   = pdf.PdfFileReader(open('pdeo.pdf', 'rb'))
+numpage = inpdf.getNumPages()
+
+# user space unit for A4 size paper (default choice for printing in India/ Change to paper of your choice)
+# note : 1 inch = 72 usu
+tar_w, tar_h = 596 , 842
+
+_, _, ow, oh = [float(x) for x in inpdf.getPage(0).mediaBox]
+
+outpdf = pdf.PdfFileWriter()
+
+# usually 36-40 usu is sufficient for binding purposes, you'll not have to tear the book apart to see text near bind
+bind_margin = 60 	#usu
+ty          = 180 	#usu, if original pdf is smaller than printing page, ty is bottom margin.
+
+for pnum in tqdm(range(numpage)):
+    page = inpdf.getPage(pnum)
+    
+    # Trim margins from right and left
+    page.trimBox.lowerLeft = tuple([a+b for a, b in zip(page.trimBox.lowerLeft, (50, 0))])
+    page.trimBox.upperRight = tuple([a-b for a, b in zip(page.trimBox.upperRight, (50, 0))])
+    page.cropBox.lowerLeft = tuple([a+b for a, b in zip(page.cropBox.lowerLeft, (50, 0))])
+    page.cropBox.upperRight = tuple([a-b for a, b in zip(page.cropBox.upperRight, (50, 0))])
+
+    # create empty A4 size page
+    emptyPage = pdf.PageObject.createBlankPage(width=tarw, height=tarh)
+    margin_available = tarw + page.mediaBox.lowerLeft[0] - page.mediaBox.upperRight[0]
+    
+    if pnum%2==0:
+            tx = bind_margin
+    else:
+            tx = margin_available - bind_margin
+
+    emptyPage.mergeTranslatedPage(page, tx, ty)
+
+    outpdf.addPage(emptyPage)
+
+
+outputStream = open(&quot;output.pdf&quot;,&quot;wb&quot;)
+outpdf.write(outputStream)
+outputStream.close()
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Changes required before you can use this script -&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;set target width, height - (tar_w, tar_h) : which is the width, height of printing paper in usu. 1 usu corresponds to 1/72 of inch.&lt;/li&gt;
+  &lt;li&gt;Usually you’ll not want to change binding margin - but it’s better to keep this variable in mind.&lt;/li&gt;
+  &lt;li&gt;Depending upon size of printing paper and pdf document, you’d want to adjust &lt;code class=&quot;highlighter-rouge&quot;&gt;ty&lt;/code&gt;:  higher ty would mean more space in bottom. Very large &lt;code class=&quot;highlighter-rouge&quot;&gt;ty&lt;/code&gt; may result in clipping of text in top.&lt;/li&gt;
+  &lt;li&gt;If you don’t want to trim margin in original document then you should comment 4 lines intended to trim margin in pdf. Or if your left and right of texts are being clipped, you might want to change 50 in (50,0) tuple according to your observation snd requirement. tuple defines how much you intend to change in (x, y) direction.&lt;/li&gt;
+  &lt;li&gt;Lastly, change the filename as required.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Note that this article intends to provide you with a boilerplate to allow you to make a pdf of your own choice suitable to booklet printing or serve your need. You can further read documentations for &lt;code class=&quot;highlighter-rouge&quot;&gt;PyPDF2&lt;/code&gt; for further possibilities. In summary you can extend the script above to achive following -&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;fit two/multiple pages in single page with minimum margin in between: rotate, scale, transform functions are available in &lt;code class=&quot;highlighter-rouge&quot;&gt;PyPDF2&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;add blank pages to a pdf&lt;/li&gt;
+  &lt;li&gt;add bookmarks to a pdf&lt;/li&gt;
+  &lt;li&gt;add watermarks or merge two pdf pages, like overlay ( I can’t see how this can be useful )&lt;/li&gt;
+  &lt;li&gt;rearrange pdf pages&lt;/li&gt;
+  &lt;li&gt;split / merge pdf documents&lt;/li&gt;
+  &lt;li&gt;any other possibilites you can think of given you can access each page of pdf as python object which can be scaled, rotated and transformed and put in new empty pages.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I’d recommend you to go through various boxes - media, trim, crop, art in a pdf page. This could make your trimming experience easier.&lt;/p&gt;
+</description>
+        <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+        <link>http://eigenspace.ml/printing-pdf-as-booklet-using-python/</link>
+        <guid isPermaLink="true">http://eigenspace.ml/printing-pdf-as-booklet-using-python/</guid>
+        
+        
+        <category>experiments</category>
+        
+      </item>
+    
+      <item>
+        <title>My lessons in life</title>
+        <description>&lt;p&gt;I came across this article during my JEE preparation. Someone was kind enough to write this entire article on 3 A4 pages in beautiful handwriting and stick on school notice board. One fine day my curiosity got over my scruples, and I snuck those pages in my diary. It has been there ever since. So there it is - some timeless lessons from &lt;em&gt;Azim Premji&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;The funny thing about life is that you realize that the value of something only when it begins to leave you. As my hair turned from black to salt and pepper and finally salt without pepper, I’ve begun to realize the importance of youth. At the same time, I’ve begun to truly appreciate some of the lessons I have learned along the way.&lt;/p&gt;
+
+&lt;p&gt;The first thing I have learnt is that we must always begin with our strengths. From the earliest years of our schooling, everyone focuses on what is wrong with us. There is an imaginary story of a rabbit. The rabbit was enrolled in a rabbit school. Like all rabbits, it could hop very well but could not swim. At the end of the year, the rabbit got high marks in hopping but failed in swimming.&lt;/p&gt;
+
+&lt;p&gt;The parents were concerned. They said, “forget about hopping. You are good at it. Anyway. Concentrate on swimming.” 
+They sent the rabbit for tuitions in swimming, and guess what happened? The rabbit forgot how to hop! As for swimming, have you ever seen a rabbit swim? While it is important for us to know what we are not good at we must also cherish what is good in us.  That is because it is only our strengths that can give us the energy to correct our weaknesses.&lt;/p&gt;
+
+&lt;p&gt;The second lesson I have learnt is that a rupee earned is of far more value than five found. My friend was sharing with me the story of his eight-year-old niece. She would always complain about the breakfast. The cook tried everything possible, but the child remained unhappy.  Finally, my friend took the child to the supermarket and bought one of those ready-to-cook packets.&lt;/p&gt;
+
+&lt;p&gt;The child had to cut the packet and pour water in the dish. After that, it took two minutes in the microwave to be ready. The child found the food to be absolutely delicious. The difference was that she cooked it! In my own life, I’ve found that nothing gives as much satisfaction as earning our rewards. In fact, what is gifted or inherited follows the old rule of come easy, go easy. I guess we only know the value of what we have struggled to earn it.&lt;/p&gt;
+
+&lt;p&gt;The third lesson I have learnt is that no one bats a hundred every time. Life has many challenges. You win some and lose some. You must enjoy winning. But do not let it go to the head. The moment it does, you are already on your way to failure.  And if you do encounter failure along the way, treat it as an equally natural phenomenon. Do not beat yourself for it or anyone else for that matter! Accept it, look at your own share in the problem, learn from it and move on. The important thing is, when you lose, do not lose the lesson.&lt;/p&gt;
+
+&lt;p&gt;The fourth lesson I’ve learnt is the importance of humility. Sometimes, when you get so much in life, you really start wondering whether you deserve all of it. This brings to me the value of gratitude. We have so much to be grateful for. Our parents, our teachers and our seniors have done so much for us that we can never repay them. Many people focus on shortcomings because obviously, no one can be perfect. But it is important first to acknowledge what we have received. Nothing in life is permanent but, when a relationship ends, rather than becoming bitter, we must learn to savor the memory of the good things while they lasted.&lt;/p&gt;
+
+&lt;p&gt;The fifth lesson I learnt is that we must always strive for excellence. One way of achieving excellence is by looking at those better than ourselves. Keep learning what they do differently. Emulate it. But excellence cannot be imposed from outside. It must become an obsession. It must involve not only our mind but also our heart and soul. Excellence is not an act but habit. I remember the inspiring lines of a poem which say that your reach must always exceed your grasp. That is heaven on earth. Ultimately, your only competition is yourself.&lt;/p&gt;
+
+&lt;p&gt;The sixth lesson I have learnt is never to give up in the face of adversity. It comes on you suddenly without warning. One can either succumb to self-pity, wring your hands in despair or decide to deal with the situation with courage and dignity.  Always keep in mind that makes us find steel. A friend of mine shared this incident with me. His eight-year-old daughter was struggling away at a jigsaw puzzle. She kept at it for hours but couldn’t succeed. Finally, it went beyond bedtime. My friend told her, “look, why don’t you just give up? I don’t think you will complete it tonight. Look at it another day.” The daughter replied with a strange look in her eyes, “ but, dad, why should I give up? All the pieces are there! I have just got to put them together!” If we persevere long enough, we can put any problem into its perspective.&lt;/p&gt;
+
+&lt;p&gt;The seventh lesson I have learnt is that while you must be open to change, do not compromise on your values. Mahatma Gandhi often said that you must open the windows of your mind, but you must not be swept off your feet by the breeze. You must define what your core values are and what you stand for. And those values are not so difficult to define. Values like honesty, integrity, consideration, and sensitivity have survived for generations. Values are not in words used to describe them, as much as in the simple acts. A wise man once said, “You do not have to change the world to make a difference. If on the way to your house, you can bring a smile on the face of a crying child, you have done your bit.” ==At the end of the day, it is the values that define a person more than the achievements.== Because it is the means of achievement that decide how long achievements will sustain. Do not be tempted by shortcuts. The shortcut can make you lose your way and end up becoming the longest way to the destination.&lt;/p&gt;
+
+&lt;p&gt;And the final lesson I learnt is that we must have faith in our own words or ideas even if everyone tells us that we are wrong. There was one newspaper vendor who had a rude customer. Every morning, the customer would walk by, refuse to return the greeting, grab the paper off the shelf and throw the money at the vendor.  The vendor would pick up the money, smile politely and say, “Thank you, sir”. One day, the vendor’s assistant asked him, “why are you always so polite with him when he is so rude to you? Why don’t you throw the newspaper at him when he comes back tomorrow ?” The vendor smiled and replied, “He can’t help being rude, and I can’t help being polite. Why should I let his rude behavior dictate my politeness ?”
+So it is, my young friends, with all of us. In my youth, I thought of myself as a rebel and was many times, a rebel without a cause. Today, I realize that my rebellion was another kind of conformity. We defined our elders to fall in line with our peers! Ultimately, we must learn to respond instead of reacting. When we respond, we evaluate with a calm mind and do whatever is most appropriate. We are in control of our actions. When we react, we are still doing what other person wants us to do.&lt;/p&gt;
+
+&lt;p&gt;Remember, those who win are those who believe they can.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 05 Apr 2019 00:00:00 +0000</pubDate>
+        <link>http://eigenspace.ml/lessons-in-life-azim-premji/</link>
+        <guid isPermaLink="true">http://eigenspace.ml/lessons-in-life-azim-premji/</guid>
+        
+        
+        <category>reflections</category>
+        
+      </item>
+    
+  </channel>
+</rss>
